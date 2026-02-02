@@ -29,6 +29,7 @@ $$y = \frac{20}{80}x \quad \{x > 0\}$$
 ### Optimizing Ore Combinations
 Ores come in three sizes, each providing a specific amount of metal. Let $a, b, c$ (for Zinc) and $d, g, f$ (for Copper) represent the count of each ore size:
 
+Some ores contain varying amounts of metal but are classified into the same three categories.
 * **Large:** 129 mB
 * **Medium:** 31 mB
 * **Small:** 13 mB
@@ -52,7 +53,7 @@ The graph below plots valid combinations. The diagonal lines represent multiples
 * **Zinc-Rich:** Select points closer to the purple line.
 * **Copper-Rich:** Select points closer to the green line.
 
-To refine the selection, we categorize points by the diversity of ore sizes used. Minimizing the variety of ore sizes simplifies inventory management.
+To refine the selection, we categorize points by the diversity of ore sizes used. Minimizing the variety of ore sizes simplifies the amount of crafting.
 
 * **Orange:** Uses 2 ore types.
 * **Blue:** Uses 3 ore types.
@@ -82,14 +83,14 @@ $$x + y \le 48 \quad \{x > 0, y > 0\}$$
 ![Bloomery Constraints](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/Pasted_image_20260202043201.png?raw=true)
 
 ### Avoiding Material Loss
-To prevent the loss of molten iron, the input iron (in mB) must be sufficient to produce full ingots (144 mB each) proportional to the charcoal used (assuming 1 charcoal creates 1 bloom/ingot).
+To prevent the loss of molten iron, the input iron (in mB) must be sufficient to produce full ingots (144 mB each) proportional to the charcoal used (1 charcoal creates 1 bloom/ingot).
 
 The efficiency model is defined by:
 
 $$x(129) \ge y(144)$$
 
 Where:
-* $129$ is the mB value of a specific iron ore type (e.g., Limonite/Hematite).
+* $129$ is the mB value of a specific iron ore type.
 * $144$ is the mB required for one ingot.
 * The goal is to find a point where the iron provided is equal to or slightly greater than the smelting capacity of the charcoal.
 
@@ -99,14 +100,14 @@ Where:
 We search for points within the blue zone that satisfy all constraints. The Y-axis represents both the charcoal count and the resulting ingot count.
 
 **Strategy:**
-To maximize efficiency (max ingots, zero loss), select the point with the **highest Y value**.
+Fortunately, all points represent a weighted sum multiple of 144 , so using any of them will prevent iron loss. To maximize efficiency (maximum ingots, zero loss), simply select the point with the **highest Y value**.
 
 ![Optimal Points Graph](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/Pasted_image_20260202044658.png?raw=true)
 
 * **Right Side:** These points fill the bloomery's 48-item capacity completely.
 * **Left Side:** These points use fewer items overall, requiring less crafting of small/medium dusts.
 
-Since a single ore item (129 mB) is not exactly equal to one ingot (144 mB), a 1:1 item ratio is impossible without loss. Therefore, we prioritize the "Top" point of the triangle rather than filling the inventory.
+Since a single ore item (129 mB) is not exactly equal to one ingot (144 mB), a 1:1 item ratio is impossible. Therefore, we prioritize the "Top" point of the triangle rather than filling the inventory.
 
 **Best Result:**
 The optimal configuration found involves:
