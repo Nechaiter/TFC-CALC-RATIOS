@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#12151e">
+  <title>TFC Ratios</title>
+  <meta name="description" content="Interactive calculators for TerraFirmaCraft early game efficiency ratios - Bloomery and Alloy optimization">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="/Pages/global.css" rel="stylesheet">
+  <script src="/Pages/routing.js"></script>
+</head>
+<body>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <nav id="nav" class="nav">
+    <button class="nav-back" onclick="showView('menu')">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Menu
+    </button>
+    <div class="nav-divider"></div>
+    <button id="nav-bloomery" class="nav-link" onclick="showView('bloomery')">Bloomery</button>
+    <button id="nav-alloys" class="nav-link">Alloys</button>
+  </nav>
+
+  <!-- ==================== ALLOYS CALCULATOR ==================== -->
+  <section id="view-alloys" class="">
+    <div class="page">
+      <header class="page-header">
+        <h1>Alloys Calculator</h1>
+        <p>Define minerals and their allowed percentage ranges to find optimal alloy combinations. Vessel capacity: 3024 mB | Max items: 64 | Ingot: 144 mB</p>
+      </header>
+
+      <div class="two-col">
+        <!-- Left Column -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+
+          <!-- Minerals -->
+          <div class="card">
+            <div class="card-head">
+              <h2 class="card-title">Minerals</h2>
+              <button class="btn btn-secondary" onclick="alloysAddMineral()">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Add Mineral
+              </button>
+            </div>
+            <div id="alloys-minerals" style="display:flex;flex-direction:column;gap:16px;"></div>
+          </div>
+
+          <!-- Validation -->
+          <div class="card">
+            <h2 class="card-title">Validation</h2>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <span class="stat-label">Sum of Min %</span>
+                <span id="alloy-sum-min" class="stat-value">0%</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">Sum of Max %</span>
+                <span id="alloy-sum-max" class="stat-value">0%</span>
+              </div>
+            </div>
+            <p id="alloy-valid-msg" class="success-text">Valid: Ranges can produce a 100% total allocation.</p>
+            <button id="alloy-calc-btn" class="btn btn-primary" onclick="alloysCalculate()">Calculate Best Combinations</button>
+          </div>
+
+          <!-- Results -->
+          <div id="alloy-results-section" class="card hidden">
+            <h2 class="card-title">Best Combinations</h2>
+            <p class="card-desc">Top results sorted by ingot yield. Showing up to 20 combinations.</p>
+            <div style="overflow-x:auto;">
+              <table id="alloy-results-table" class="results-table"></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="card">
+            <h2 class="card-title">Interactive Graph</h2>
+            <p class="card-desc">Desmos visualization of alloy constraints. Bounded region shows valid compositions.</p>
+            <div class="desmos-wrap">
+              <iframe title="Alloys Desmos Graph" src="https://www.desmos.com/calculator/x55yoxhrbt" loading="lazy"></iframe>
+            </div>
+          </div>
+
+          <!-- Composition Visualizer -->
+          <div class="card">
+            <h2 class="card-title">Composition Ranges</h2>
+            <p class="card-desc">Visual representation of each mineral's allowed percentage range in the alloy.</p>
+            <div id="alloy-comp-bars" class="comp-bar-wrap"></div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
+              <span class="card-desc">Mid-range composition preview</span>
+              <div id="alloy-stacked-bar" class="stacked-bar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="card analysis-section">
+        <h2 class="card-title">Analysis</h2>
+        <p class="card-desc">Write your observations and analysis below.</p>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

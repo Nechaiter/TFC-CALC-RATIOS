@@ -1,22 +1,40 @@
 import pandas as pd
 import math
-#https://www.desmos.com/calculator/x55yoxhrbt
+
 
 data_denominator = []
 
 max_vessel=3024
 max_items=64
 
-greater_mineral=[144,36,16]
-lesser_mineral=[129,31,13]
 
-greater_mineral_bounds=(70,80)
-lesser_mineral_bounds=(20,30)
+# zinc, copper , bismuth
+
+minerals_mbs=[(129,31,13),(144,36,16),(144,36,16)]
+
+minerals_bounds=[(20,30),(50,65),(10,20)]
+
+mineral_items=[(0,0,0),(0,0,0),(0,0,0)]
 
 greater_mineral_items=[0,0,0]
 lesser_mineral_items=[0,0,0]
 
 ml_to_ingots=144
+
+
+for mineral_index in range(len(minerals_mbs)):
+    
+
+    for big_dust in range(mineral_items[mineral_index][0]):
+        for middle_dust in range(mineral_items[mineral_index][1]):
+            for small_dust in range(mineral_items[mineral_index][2]):
+
+
+
+
+
+
+
 
 
 for index in range(len(greater_mineral)):
