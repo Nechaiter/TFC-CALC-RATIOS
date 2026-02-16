@@ -105,7 +105,7 @@ Fortunately, all points represent a weighted sum multiple of 144 , so using any 
 ![Optimal Points Graph](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/Pasted_image_20260202044658.png?raw=true)
 
 * **Right Side:** These points fill the bloomery's 48-item capacity completely.
-* **Left Side:** These points use fewer items overall, requiring less crafting of small/medium dusts.
+* **Left Side:** These points use fewer items overall.
 
 Since a single ore item (129 mB) is not exactly equal to one ingot (144 mB), a 1:1 item ratio is impossible. Therefore, we prioritize the "Top" point of the triangle rather than filling the inventory.
 

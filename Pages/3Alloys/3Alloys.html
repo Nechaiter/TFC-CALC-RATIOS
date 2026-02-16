@@ -10,8 +10,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link href="../global.css" rel="stylesheet">
+  <link href="./3Alloys.css" rel="stylesheet">
+  <link href="../Styles/base.css" rel="stylesheet">
+  <link href="../Styles/navbar.css" rel="stylesheet">
+  <link href="../Styles/items.css" rel="stylesheet">
+  
+
+
   <script src="../routing.js"></script>
+  <script src="3Alloys.js"></script>
 </head>
 <body>
 
@@ -26,87 +33,68 @@
     <button id="nav-alloys" class="nav-link">Alloys</button>
   </nav>
 
-  <!-- ==================== ALLOYS CALCULATOR ==================== -->
-  <section id="view-alloys" class="">
-    <div class="page">
+  <section id="view-alloys" class="page">
+    <div class="alloy-full">
       <header class="page-header">
         <h1>Alloys Calculator</h1>
-        <p>Define minerals and their allowed percentage ranges to find optimal alloy combinations. Vessel capacity: 3024 mB | Max items: 64 | Ingot: 144 mB</p>
+        TODO tiene que haber como minimo 2 metales y maximo 3
+        Digitar mas de un digito en el range
+        <p>Define up to 3 minerals, each with custom coefficients. Use presets or add your own values, then calculate to find optimal points.</p>
       </header>
 
-      <div class="two-col">
-        <!-- Left Column -->
-        <div style="display:flex;flex-direction:column;gap:24px;">
+      <!-- 3-Column Mineral Definition -->
+      <div id="alloys-minerals" class="minerals-grid"></div>
+      
+      <div style="display: flex; justify-content: center; margin-top: 1rem;">
+        <button id="add-mineral-btn" class="btn-xs" style="padding: 8px 16px;" onclick="alloysAddMineral()">+ Add Mineral</button>
+      </div>
 
-          <!-- Minerals -->
-          <div class="card">
-            <div class="card-head">
-              <h2 class="card-title">Minerals</h2>
-              <button class="btn btn-secondary" onclick="alloysAddMineral()">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                Add Mineral
-              </button>
-            </div>
-            <div id="alloys-minerals" style="display:flex;flex-direction:column;gap:16px;"></div>
-          </div>
+      <!-- Calculate Bar -->
+      <div class="calc-bar">
+        <button id="alloy-calc-btn" class="btn-calc" onclick="alloysCalculate()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L18 18H2L10 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="12" r="2" fill="currentColor"/></svg>
+          Calculate
+        </button>
+      </div>
 
-          <!-- Validation -->
-          <div class="card">
-            <h2 class="card-title">Validation</h2>
-            <div class="stats-grid">
-              <div class="stat-box">
-                <span class="stat-label">Sum of Min %</span>
-                <span id="alloy-sum-min" class="stat-value">0%</span>
-              </div>
-              <div class="stat-box">
-                <span class="stat-label">Sum of Max %</span>
-                <span id="alloy-sum-max" class="stat-value">0%</span>
-              </div>
-            </div>
-            <p id="alloy-valid-msg" class="success-text">Valid: Ranges can produce a 100% total allocation.</p>
-            <button id="alloy-calc-btn" class="btn btn-primary" onclick="alloysCalculate()">Calculate Best Combinations</button>
-          </div>
+      <!-- Results: Highlights (Top 3 Max + Min) -->
+      <div id="alloy-results-wrap" class="results-section hidden">
+        <div id="alloy-highlights" class="results-highlights"></div>
 
-          <!-- Results -->
-          <div id="alloy-results-section" class="card hidden">
-            <h2 class="card-title">Best Combinations</h2>
-            <p class="card-desc">Top results sorted by ingot yield. Showing up to 20 combinations.</p>
-            <div style="overflow-x:auto;">
-              <table id="alloy-results-table" class="results-table"></table>
+        <!-- Expandable All-Points Table -->
+        <div class="expandable-section">
+          <button class="expandable-toggle" id="alloy-table-toggle" onclick="toggleAlloyTable()">
+            <span>All Calculated Points</span>
+            <div class="expandable-toggle-right">
+              <span id="alloy-points-count">0 points</span>
+              <svg viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
+          </button>
+          <div class="expandable-body" id="alloy-table-body">
+            <table class="data-table" id="alloy-data-table"></table>
           </div>
         </div>
 
-        <!-- Right Column -->
-        <div style="display:flex;flex-direction:column;gap:24px;">
-          <div class="card">
-            <h2 class="card-title">Interactive Graph</h2>
-            <p class="card-desc">Desmos visualization of alloy constraints. Bounded region shows valid compositions.</p>
-            <div class="desmos-wrap">
-              <iframe title="Alloys Desmos Graph" src="https://www.desmos.com/calculator/x55yoxhrbt" loading="lazy"></iframe>
-            </div>
-          </div>
-
-          <!-- Composition Visualizer -->
-          <div class="card">
-            <h2 class="card-title">Composition Ranges</h2>
-            <p class="card-desc">Visual representation of each mineral's allowed percentage range in the alloy.</p>
-            <div id="alloy-comp-bars" class="comp-bar-wrap"></div>
-            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
-              <span class="card-desc">Mid-range composition preview</span>
-              <div id="alloy-stacked-bar" class="stacked-bar"></div>
-            </div>
+        <!-- Graph Container -->
+        <div class="graph-container">
+          <h2>Graph</h2>
+          <p style="font-size:0.75rem;color:var(--fg-muted);">Custom visualization of calculated data points. Plug in your preferred chart library or API below.</p>
+          <div class="graph-placeholder" id="alloy-graph">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="6" width="36" height="36" rx="4" stroke="currentColor" stroke-width="2"/><polyline points="12,36 20,22 28,30 36,14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="36" r="2" fill="currentColor"/><circle cx="20" cy="22" r="2" fill="currentColor"/><circle cx="28" cy="30" r="2" fill="currentColor"/><circle cx="36" cy="14" r="2" fill="currentColor"/></svg>
+            Graph will render here after calculation
+            <span>Connect your chart API or Desmos iframe in the code</span>
           </div>
         </div>
       </div>
 
       <!-- Analysis -->
-      <div class="card analysis-section">
+      <!-- <div class="card analysis-section">
         <h2 class="card-title">Analysis</h2>
         <p class="card-desc">Write your observations and analysis below.</p>
-      </div>
+        <textarea id="alloys-analysis" placeholder="Write your alloy analysis here..." rows="8"></textarea>
+      </div> -->
     </div>
-  </section>
+</section>
 
 </body>
 </html>

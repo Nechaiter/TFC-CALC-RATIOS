@@ -2,6 +2,8 @@ import pandas as pd
 import math
 #https://www.desmos.com/calculator/x55yoxhrbt
 
+
+# This code is deprecated, 3alloys.js implements this better
 data_denominator = []
 
 max_vessel=3024
@@ -57,7 +59,7 @@ print(lesser_mineral_items)
 for d in range(greater_mineral_items[0]):
     for e in range(greater_mineral_items[1]):
         for f in range(greater_mineral_items[2]):
-
+            
             sum_vars = d + e + f
             if sum_vars > max_items:
                 continue
@@ -68,7 +70,7 @@ for d in range(greater_mineral_items[0]):
 
             if current_percent>greater_mineral_bounds[1]:
                 continue
-            slots=int(d > 0) + int(e > 0) + int(f > 0)
+            slots=math.ceil(d / 16) + math.ceil(e / 16) + math.ceil(f / 16)
 
             data_denominator.append((d, e, f, sum_vars,slots, value_X))
 
@@ -90,7 +92,7 @@ for a in range(lesser_mineral_items[0]):
 
             if current_percent>lesser_mineral_bounds[1]:
                 continue
-            slots=int(a > 0) + int(b > 0) + int(c > 0)
+            slots=math.ceil(a / 16) + math.ceil(b / 16) + math.ceil(c / 16)
             data_numerador.append((a, b, c, sum_vars,slots, value_Y))
 
 df_numerador = pd.DataFrame(data_numerador, columns=['a', 'b', 'c', 'sum_abc','slots', 'Y'])
@@ -110,7 +112,7 @@ for index, row_numera in df_numerador.iterrows():
         (df_denominator['X'] <= max_X) & 
         #(df_denominador['X']+Y>=ml_to_ingots) & 
         ((df_denominator['X']+Y)%ml_to_ingots==0) & 
-        (df_denominator['X']+Y<=max_vessel) &
+        (df_denominator['X']+Y<=max_vessel) & 
         (df_denominator['slots']+row_numera['slots']<=4)
         ]
     
