@@ -34,8 +34,8 @@ function alloysRender() {
     let html = `
       <div class="mineral-header" style="display:flex; justify-content:space-between; align-items:center;">
         <div style="display:flex;align-items:center;gap:10px;">
-        <input type="color" class="mineral-dot" value="${m.color}" data-midx="${mIdx}" oninput="alloysUpdateColor(this)" style="padding:0; border:none; cursor:pointer;">
-        <input type="text" class="mineral-name-input" value="${escHtml(m.name)}" data-midx="${mIdx}" oninput="alloysUpdateName(this)">
+        <input type="color" class="mineral-dot" value="${m.color}" data-midx="${mIdx}" onchange="alloysUpdateColor(this)" style="padding:0; border:none; cursor:pointer;">
+        <input type="text" class="mineral-name-input" value="${escHtml(m.name)}" data-midx="${mIdx}" onchange="alloysUpdateName(this)">
         </div>
         <button class="coeff-remove" onclick="alloysRemoveMineral(${mIdx})"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
       </div>`;
@@ -48,12 +48,12 @@ function alloysRender() {
         <div class="ratio-inputs">
           <div class="input-group">
             <label>Min</label>
-            <input type="number" min="0" max="100" value="${m.ratioMin}" data-midx="${mIdx}" data-field="ratioMin" oninput="alloysUpdateRatio(this)">
+            <input type="number" min="0" max="100" value="${m.ratioMin}" data-midx="${mIdx}" data-field="ratioMin" onchange="alloysUpdateRatio(this)">
           </div>
           <span class="ratio-separator">&ndash;</span>
           <div class="input-group">
             <label>Max</label>
-            <input type="number" min="0" max="100" value="${m.ratioMax}" data-midx="${mIdx}" data-field="ratioMax" oninput="alloysUpdateRatio(this)">
+            <input type="number" min="0" max="100" value="${m.ratioMax}" data-midx="${mIdx}" data-field="ratioMax" onchange="alloysUpdateRatio(this)">
           </div>
         </div>
         <div class="ratio-bar">
@@ -73,7 +73,7 @@ function alloysRender() {
       html += `
         <div class="coeff-row">
           <span class="coeff-tag">C${cIdx + 1}</span>
-          <input type="number" min="0" value="${c}" data-midx="${mIdx}" data-cidx="${cIdx}" oninput="alloysUpdateCoeff(this)">
+          <input type="number" min="0" value="${c}" data-midx="${mIdx}" data-cidx="${cIdx}" onchange="alloysUpdateCoeff(this)">
           ${m.coefficients.length > 1 ? `<button class="coeff-remove" onclick="alloysRemoveCoeff(${mIdx}, ${cIdx})" aria-label="Remove coefficient ${cIdx + 1}"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6H9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>` : ''}
         </div>
       `;
@@ -152,52 +152,47 @@ MAX_ITEM_PER_SLOT=16
 MB_TO_INGOT=144
 MAX_SLOTS=4
 
-function alloysCalculate() {
+// Helper to let UI update
+const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
+async function alloysCalculate() {
   const btn = document.getElementById('alloy-calc-btn');
   const resultsWrap = document.getElementById('alloy-results-wrap');
   
-  btn.disabled = true;
-  const originalContent = btn.innerHTML;
-  btn.innerHTML = `<span class="spinner"></span> Calculating...`;
-  resultsWrap.classList.add('hidden'); // Ocultar resultados previos
+  if(btn) btn.disabled = true;
+  const originalContent = btn ? btn.innerHTML : 'Calculate';
+  
+  const updateStatus = async (msg) => {
+    if(btn) btn.innerHTML = `<span class="spinner"></span> ${msg}`;
+    await delay(10); 
+  };
 
+  resultsWrap.classList.add('hidden'); 
 
-//   let minerals = [
-//   { name: 'Mineral 1', coefficients: [144, 36, 16], ratioMin: 50, ratioMax: 65, color: MINERAL_COLORS[0],item_bounds:[0,0,0] },
-//   { name: 'Mineral 2', coefficients: [129, 31, 13], ratioMin: 20, ratioMax: 30, color: MINERAL_COLORS[1],item_bounds:[0,0,0] },
-// ];
+  // STEP 1: CALCULATE BOUNDS
+  await updateStatus("Calculating item bounds...");
 
+  const startTime = performance.now();
   // REDUCE ILOGICAL COMBINATIONS
-
-
   //console.table(minerals); 
   for (let index = 0; index<minerals.length; index++){
-
     for (let coeff = 0; coeff < minerals[index].coefficients.length; coeff++) {
-      
-      
       let max_logical_item_count=Math.ceil(MAX_VESSEL_MB/minerals[index].coefficients[coeff]) // 3024/144 = maximun of 21 items 
-      
-
       // Reduce the quantity of a coeff lower o equal to the capacity of the vessel
       minerals[index].item_bounds[coeff]=(max_logical_item_count<64) ? max_logical_item_count : MAX_TOTAL_ITEM
-
-
       //Checks if the MB quantity overpass the max ratio
       let max_mb_from_coeff_and_item_bound=minerals[index].item_bounds[coeff]*minerals[index].coefficients[coeff] //144*21= gets 3024 mb
       if ((max_mb_from_coeff_and_item_bound*100)/MAX_VESSEL_MB > minerals[index].ratioMax){
-        
         upper_bound_mb = MAX_VESSEL_MB*minerals[index].ratioMax/100
         max_upper_bound_item_quantity= Math.floor(upper_bound_mb/minerals[index].coefficients[coeff])
-
         minerals[index].item_bounds[coeff]=max_upper_bound_item_quantity
       }
     }
   }
-//   let minerals = [
-//   { name: 'Mineral 1', coefficients: [144, 36, 16], ratioMin: 50, ratioMax: 65, color: MINERAL_COLORS[0],item_bounds:[0,0,0] },
-//   { name: 'Mineral 2', coefficients: [129, 31, 13], ratioMin: 20, ratioMax: 30, color: MINERAL_COLORS[1],item_bounds:[0,0,0] },
-// ];
+
+  // STEP 2: GENERATE STATES
+  await updateStatus("Generating state space...");
+
   // Calculate states values and filtrate weighted sum of items and mb
   minerals_data={
   }
@@ -219,10 +214,12 @@ function alloysCalculate() {
       current[index] = i; 
       combinations_per_coeff(bounds,callback,current, index + 1); 
     }
-
- }
+  }
 
   for (let mineral_index = 0; mineral_index<minerals.length;mineral_index++){
+    // Update status for each mineral to show progress
+    await updateStatus(`Processing mineral ${mineral_index + 1}/${minerals.length}...`);
+
     total_items=0
     minerals_data[minerals[mineral_index].name]=[]
     let combinaciones=0
@@ -239,7 +236,9 @@ function alloysCalculate() {
       // a vessel only can store up to 4 coeff
       let slots_usage=items_by_coeff.reduce((a, b) => a + Math.ceil(b/16), 0);
       if (slots_usage>=MAX_SLOTS) return;
-      
+
+      if (slots_usage>MAX_SLOTS-(minerals.length-1)) return;
+
       let point_data={
         items_count:sum_vars,
         slots_usage:slots_usage,
@@ -247,22 +246,14 @@ function alloysCalculate() {
         var_count: items_by_coeff
       }
       minerals_data[minerals[mineral_index].name].push(point_data)
-    });
-    // for (let coeff_index= 0; coeff_index<minerals[mineral_index].coefficients.length;coeff_index++){        
-    //   console.log(minerals[mineral_index].coefficients[coeff_index])
-    //   for (let items= 0; items<=minerals[mineral_index].item_bounds[coeff_index] ; items++){
-    //       
-    //       total_items+=items
-    //     }
-    //   console.log(total_items)
-    // } 
-    
-    
+    }); 
   }
   console.log(minerals_data)
   console.table(minerals)
-
   
+  // STEP 3: CARTESIAN PRODUCT
+  await updateStatus("Merging combinations...");
+
   /**
    * 
    * @param {number[]} bounds are the valid points generated [5846,1597]
@@ -276,6 +267,7 @@ function alloysCalculate() {
       callback([...current])
       return; // retornar los valores de ese coeff
     }
+    
     for (let i = 0; i < bounds[index]; i++) {
       current[index] = i; 
       cartesian_product(bounds,callback,current, index + 1); 
@@ -291,6 +283,10 @@ function alloysCalculate() {
     let name=minerals[mineral_index].name
     bound.push(minerals_data[name].length)
   }
+  console.log()
+  // Optional: Inform about the magnitude of the reduction
+  await updateStatus(`Filtering ${bound.reduce((a,b)=>a*b, 1)} candidates...`);
+
   let combinaciones=0
   cartesian_product(bound,(points)=>{
     sum_slots=0
@@ -314,7 +310,6 @@ function alloysCalculate() {
     if (sum_mb>MAX_VESSEL_MB) return;
     if (sum_mb%MB_TO_INGOT!=0) return;
 
-    
     for (let axis_ws=0; axis_ws<weighted_sum.length; axis_ws++){
       metal_percent=(weighted_sum[axis_ws]*100)/sum_mb
       if (metal_percent< minerals[axis_ws].ratioMin || metal_percent>minerals[axis_ws].ratioMax) return;
@@ -330,13 +325,17 @@ function alloysCalculate() {
     }
 
     values.push(point_of_interes)
-    testx.push(weighted_sum[0])
-    testy.push(weighted_sum[1])
-    // combinaciones+=1
+    // testx.push(weighted_sum[0])
+    // testy.push(weighted_sum[1])
+    combinaciones+=1
   });
-  // console.log(combinaciones)
-  console.log(testx)
-  console.log(testy)
+  console.log(combinaciones)
+  console.log(values)
+  // STEP 4: SORTING
+  await updateStatus("Sorting results...");
+
+  // console.log(testx)
+  // console.log(testy)
   values.sort((a,b)=>{
 
     if (b.MB !== a.MB) {
@@ -348,37 +347,16 @@ function alloysCalculate() {
     return a.total_items-b.total_items ;
   })
 
-
-
-
-
-
-  // setTimeout(() => {
-  //   alloyResults = [];
-  //   for (let i = 0; i < 30; i++) {
-  //     const mineralData = minerals.map(m => ({
-  //       name: m.name,
-  //       vars: m.coefficients.map(() => Math.floor(Math.random() * 15)),
-  //     }));
-  //     const wSum = minerals.map((m, mIdx) => {
-  //       return m.coefficients.reduce((acc, c, ci) => acc + c * mineralData[mIdx].vars[ci], 0);
-  //     });
-  //     alloyResults.push({
-  //       MB: Math.floor(Math.random() * 2500) + 500,
-  //       total_items: Math.floor(Math.random() * 60) + 4,
-  //       slots: Math.floor(Math.random() * 4) + 1,
-  //       weighted_sum: wSum,
-  //       minerals: mineralData,
-  //     });
-  //   }
-  //   renderAlloyResults(alloyResults);
-  //   console.table(alloyResults)
-  //   btn.disabled = false;
-  //   btn.innerHTML = originalContent;
-  // }, 600);
+  const endTime = performance.now();
+  const timeElapsed = (endTime - startTime).toFixed(2);
+  console.log(`${timeElapsed} ms`)
+  await updateStatus("Rendering...");
   renderAlloyResults(values);
-  btn.disabled = false;
-  btn.innerHTML = originalContent;
+  
+  if(btn) {
+    btn.disabled = false;
+    btn.innerHTML = originalContent;
+  }
   // console.table(values)
 }
 /* Build a highlight card's HTML detail block */
