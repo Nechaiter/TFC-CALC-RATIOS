@@ -48,6 +48,10 @@ $$\frac{20}{80} \le \frac{y}{x} \le \frac{30}{70}$$
 ### Selecting the Best Ratio
 The graph below plots valid combinations. The diagonal lines represent multiples of **144 mB**, which is the amount required to produce a single ingot.
 
+### Note on Graph Accuracy
+
+Some of the points are incorrect, they use more than 4 slots, in the web page is corrected.
+
 ![Graph of Valid Points](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/Pasted_image_20260202040116.png?raw=true)
 
 * **Zinc-Rich:** Select points closer to the purple line.
@@ -87,11 +91,11 @@ To prevent the loss of molten iron, the input iron (in mB) must be sufficient to
 
 The efficiency model is defined by:
 
-$$x(129) \ge y(144)$$
+$$x \ge y$$
 
 Where:
-* $129$ is the mB value of a specific iron ore type.
-* $144$ is the mB required for one ingot.
+* $x$ is the amount of iron ore.
+* $y$ is the amount of charcoal needed.
 * The goal is to find a point where the iron provided is equal to or slightly greater than the smelting capacity of the charcoal.
 
 ![Efficiency Zone](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/Pasted_image_20260202044340.png?raw=true)

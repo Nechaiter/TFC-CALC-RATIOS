@@ -1,111 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NZ7L2LT2');</script>
+    <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#12151e">
-  <title>TFC Ratios</title>
-  <meta name="description" content="Interactive calculators for TerraFirmaCraft early game efficiency ratios - Bloomery and Alloy optimization">
+  <title>TFC Ratios - Bloomery</title>
+  <meta name="description" content="Interactive calculator for TerraFirmaCraft Bloomery optimization">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+
+  <link href="./Bloomery.css" rel="stylesheet">
   <link href="../Styles/base.css" rel="stylesheet">
   <link href="../Styles/navbar.css" rel="stylesheet">
+  <link href="../Styles/items.css" rel="stylesheet">
+
+
+  <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
   <script src="../routing.js"></script>
+  <script src="Bloomery.js"></script>
 </head>
 <body>
-
-    <!-- ==================== NAVIGATION ==================== -->
-    <nav id="nav" class="nav">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NZ7L2LT2"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  <!-- ==================== NAVIGATION ==================== -->
+  <nav id="nav" class="nav">
     <button class="nav-back" onclick="showView('menu')">
-        <svg viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Back to Menu
+      <svg viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Menu
     </button>
     <div class="nav-divider"></div>
     <button id="nav-bloomery" class="nav-link">Bloomery</button>
-    <button id="nav-alloys" class="nav-link" onclick="showView('3Alloys')">Alloys</button>
-    </nav>
+    <button id="nav-alloys" class="nav-link" onclick="showView('Alloys')">Alloys</button>
+  </nav>
 
-    <!-- ==================== BLOOMERY CALCULATOR ==================== -->
 
-    In progress
-    <section id="view-bloomery" class="hidden">
-    <div class="page">
-        <header class="page-header">
+  <!-- Bloomery -->
+  <section id="view-bloomery" class="page">
+    <div class="bloomery-full">
+      <header class="page-header">
         <h1>Bloomery Calculator</h1>
-        <p>Optimize iron ore and charcoal ratios for maximum ingot yield. The Bloomery accepts a maximum of 48 items.</p>
-        </header>
+        <p>Define iron ore coefficients and calculate optimal combinations for maximum efficiency.</p>
+      </header>
 
-        <div class="two-col">
-        <!-- Left Column -->
-        <div style="display:flex;flex-direction:column;gap:24px;">
-
-            <!-- Iron Ore Inputs -->
-            <div class="card">
-            <div class="card-head">
-                <h2 class="card-title">Iron Ore Inputs</h2>
-                <button class="btn btn-secondary" onclick="bloomeryAddInput()">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                Add Input
-                </button>
-            </div>
-            <div id="bloomery-inputs" style="display:flex;flex-direction:column;gap:12px;"></div>
-            </div>
-
-            <!-- Charcoal -->
-            <div class="card">
-            <h2 class="card-title">Charcoal</h2>
-            <div class="input-group">
-                <label class="form-label" for="bloomery-charcoal">Quantity (1 charcoal = 1 bloom/ingot)</label>
-                <input id="bloomery-charcoal" type="number" min="0" value="0" oninput="bloomeryRecalc()">
-            </div>
-            </div>
-
-            <!-- Summary -->
-            <div class="card">
-            <h2 class="card-title">Summary</h2>
-            <div class="stats-grid">
-                <div class="stat-box">
-                <span class="stat-label">Total Iron (mB)</span>
-                <span id="bloom-total-mb" class="stat-value">0</span>
-                </div>
-                <div class="stat-box">
-                <span class="stat-label">Total Items</span>
-                <span id="bloom-total-items" class="stat-value">0 / 48</span>
-                </div>
-                <div class="stat-box">
-                <span class="stat-label">Ingots Produced</span>
-                <span id="bloom-ingots" class="stat-value primary">0</span>
-                </div>
-                <div class="stat-box">
-                <span class="stat-label">Iron Loss (mB)</span>
-                <span id="bloom-loss" class="stat-value">0</span>
-                </div>
-            </div>
-            <p id="bloom-warning" class="warning hidden">Warning: Total items exceed the Bloomery capacity of 48.</p>
-            </div>
+      <!-- Iron Configuration Card -->
+      <div class="card">
+        <div class="iron-header">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="mineral-dot" style="background:#E76F51;"></div>
+            <h3>Iron Ore</h3>
+          </div>
         </div>
 
-        <!-- Right Column -->
-        <div style="display:flex;flex-direction:column;gap:24px;">
-            <div class="card">
-            <h2 class="card-title">Interactive Graph</h2>
-            <p class="card-desc">Desmos visualization of Bloomery constraints. The blue zone represents valid configurations.</p>
-            <div class="desmos-wrap">
-                <iframe title="Bloomery Desmos Graph" src="https://www.desmos.com/calculator/hmbsmocu3p" loading="lazy"></iframe>
-            </div>
-            <p class="card-desc">x-axis: Iron Ore items | y-axis: Charcoal items (= ingot count)</p>
-            </div>
+        <div class="coeff-list" id="iron-coeff-list"></div>
+
+        <div class="coeff-actions">
+          <button class="btn-xs" onclick="bloomeryAddCoeff()">+ Add Coefficient</button>
+          <div style="width:1px;height:16px;background:var(--border)"></div>
+          <button class="btn-xs" onclick="bloomeryApplyPreset('A')">144/36/16</button>
+          <button class="btn-xs" onclick="bloomeryApplyPreset('B')">129/31/13</button>
         </div>
+      </div>
+
+      <!-- Calculate Bar -->
+      <div class="calc-bar">
+        <button id="bloomery-calc-btn" class="btn-calc" onclick="bloomeryCalculate()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L18 18H2L10 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="12" r="2" fill="currentColor"/></svg>
+          Calculate
+        </button>
+      </div>
+
+      <!-- Results Section -->
+      <div id="bloomery-results-wrap" class="results-wrap hidden">
+
+        <!-- Layout: Results on left, Graph on right -->
+        <div class="results-layout">
+
+          <!-- Left Column: Results -->
+          <div class="results-column">
+
+            <!-- Best Result Card -->
+            <div class="best-result-card">
+              <div class="best-badge">
+                <svg viewBox="0 0 16 16" fill="none"><path d="M8 1L10.163 5.38279L15 6.11803L11.5 9.52918L12.326 14.382L8 12.1L3.674 14.382L4.5 9.52918L1 6.11803L5.837 5.38279L8 1Z" fill="currentColor"/></svg>
+                Best Result
+              </div>
+              <div class="best-content" id="best-result-content">
+                <div class="best-stats">
+                  <div class="best-stat">
+                    <span class="best-stat-label">Ingots</span>
+                    <span class="best-stat-value" id="best-ingots">0</span>
+                  </div>
+                  <div class="best-stat">
+                    <span class="best-stat-label">Iron Ore</span>
+                    <span class="best-stat-value" id="best-ore">0</span>
+                  </div>
+                  <div class="best-stat">
+                    <span class="best-stat-label">Total MB</span>
+                    <span class="best-stat-value" id="best-mb">0</span>
+                  </div>
+                </div>
+                <div class="best-detail" id="best-detail"></div>
+              </div>
+            </div>
+
+            <!-- Top 3 Results -->
+            <div class="top3-section">
+              <h3 class="section-title">Top 3 Results</h3>
+              <div class="top3-grid" id="top3-grid"></div>
+            </div>
+
+            <!-- All Results Table (Expandable) -->
+            <div class="expandable-section">
+              <button class="expandable-toggle" id="bloomery-table-toggle" onclick="toggleBloomeryTable()">
+                <span>All Calculated Points</span>
+                <div class="expandable-toggle-right">
+                  <span id="bloomery-points-count">0 points</span>
+                  <svg viewBox="0 0 16 16" fill="none"><path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </button>
+              <div class="expandable-body" id="bloomery-table-body">
+                <table class="data-table" id="bloomery-data-table"></table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Graph -->
+          <div class="graph-column">
+            <div class="graph-container">
+              <h3 class="graph-title">Efficiency Graph</h3>
+              <div id="bloomery-calculator" class="graph-canvas"></div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Analysis -->
-        <div class="card analysis-section">
-        <h2 class="card-title">Analysis</h2>
-        <p class="card-desc">Write your observations and analysis below. This area is for your notes on the ratio calculations.</p>
-        </div>
+      </div>
+
     </div>
-    </section>
+  </section>
+
 </body>
 </html>

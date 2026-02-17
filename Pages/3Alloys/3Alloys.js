@@ -196,7 +196,7 @@ function updateDesmosGraph(results) {
         // El límite es una línea horizontal (techo)
         latex: `y = ${3024} \\{x > 0\\}`,
         color: Desmos.Colors.RED,
-        lineStyle: Desmos.Styles.DASHED
+        lineStyle: Desmos.Styles
     });
 
     calculator.setExpression({
