@@ -355,6 +355,38 @@ async function alloysCalculate() {
 
   resultsWrap.classList.add('hidden'); 
 
+  // CHECK IF RATIOS ARE CONSISTENT
+
+
+  
+  if (minerals.length>1){
+    const totalSum_max = minerals.reduce((acc, curr) => acc + curr.ratioMax, 0);
+    const totalSum_min = minerals.reduce((acc, curr) => acc + curr.ratioMin, 0);
+    
+    const ratios = document.getElementById('ratios');
+    
+    for (let index = 0; index<minerals.length; index++){
+      if (minerals[index].ratioMin+(totalSum_max-minerals[index].ratioMax)<100){
+        ratios.innerHTML = `
+          <h3 style="margin-top:0; color:#E76F51;">Invalid ratios. The sum of each minimum value combined with the maximum values of the remaining items must exceed 100%.</h3>
+        `;
+        ratios.classList.remove('hidden');
+        return;
+      }
+      if (minerals[index].ratioMax+(totalSum_min-minerals[index].ratioMin)>100){
+        ratios.innerHTML = `
+          <h3 style="margin-top:0; color:#E76F51;">Invalid ratios. The sum of each max value combined with the min values of the remaining items mustn't exceed 100%.</h3>
+        `;
+        ratios.classList.remove('hidden');
+        return;
+      }
+    }
+  }
+
+
+
+
+
   // STEP 1: CALCULATE BOUNDS
   await updateStatus("Calculating item bounds...");
 
