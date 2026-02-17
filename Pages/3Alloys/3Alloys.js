@@ -132,9 +132,12 @@ function alloysAddMineral() {
 
 function alloysRemoveMineral(mIdx) {
   minerals.splice(mIdx, 1);
-  // Re-assign colors based on new indices? Or keep them consistent?
-  // Resetting colors based on index ensures 1st is always first color, etc.
-  //minerals.forEach((m, i) => m.color = MINERAL_COLORS[i] || '#ccc');
+  console.log("tets")
+  if (minerals.length===1){
+    minerals[0].ratioMin = 0
+    minerals[0].ratioMax = 100
+    
+  }
   alloysRender();
 }
 
@@ -154,6 +157,189 @@ MAX_SLOTS=4
 
 // Helper to let UI update
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
+let calculator;
+function initDesmos() {
+  const elt = document.getElementById('calculator');
+  if(!elt) return;
+  
+  calculator = Desmos.GraphingCalculator(elt, {
+    keypad: false,
+    expressions: false, 
+    settingsMenu: true
+  });
+}
+
+
+function updateDesmosGraph(results) {
+  
+  const elt = document.getElementById('calculator');
+  if (!elt) return;
+  elt.classList.remove("hidden");
+
+  if (!calculator) {
+     initDesmos(); 
+  }
+  
+  calculator.setBlank();
+  let xData = [];
+  let yData = [];
+  
+  if (minerals.length===1){
+    xData = results.map(p => p.total_items);
+    yData = results.map(p => p.weighted_sum[0]/MB_TO_INGOT);
+    
+
+    calculator.setExpression({
+        id: 'mb_limit_line',
+        type: 'expression',
+        // El límite es una línea horizontal (techo)
+        latex: `y = ${3024} \\{x > 0\\}`,
+        color: Desmos.Colors.RED,
+        lineStyle: Desmos.Styles.DASHED
+    });
+
+    calculator.setExpression({
+        id: 'x_values',
+        type: 'expression',
+        latex: `X_{vals} = [${xData.join(',')}]`
+      });
+
+      calculator.setExpression({
+        id: 'y_values',
+        type: 'expression',
+        latex: `Y_{vals} = [${yData.join(',')}]`
+      });
+
+      
+      calculator.setExpression({
+        id: 'points_plot',
+        type: 'expression',
+        latex: `(X_{vals}, Y_{vals})`,
+        color: Desmos.Colors.BLUE,
+        pointStyle: Desmos.Styles.POINT,
+        pointSize: '3' 
+      });
+      
+      let yAxisLabel = minerals[0].name + " (Ingots)";
+      let xAxisLabel = "Total items (items)";
+
+      calculator.updateSettings({
+        xAxisLabel: xAxisLabel,
+        yAxisLabel: yAxisLabel,
+        xAxisStep: 1, // Opcional: fuerza pasos enteros si quieres
+        yAxisStep: 1
+      });
+
+
+  }
+  else {
+    if (minerals.length === 2){
+      xData = results.map(p => p.weighted_sum[0]);
+      yData = results.map(p => p.weighted_sum[1]); 
+
+      calculator.setExpression({
+        id:'MB_limit',
+        type:'expression',
+        latex: `x+y=3024`,
+        color: Desmos.Colors.RED
+      })
+      if (minerals[0].ratioMin===0){
+        console.log("test")
+        calculator.setExpression({
+        id: 'vertical_orange',
+        type: 'expression',
+        latex: `x = 0\\{y>0\\}`,
+        color: Desmos.Colors.ORANGE,
+        lineStyle: Desmos.Styles,
+        lineOpacity: 1,  
+        lineWidth: 5   
+        });
+      }
+      else{
+        calculator.setExpression({
+        id: 'ratio_upper_limit', 
+        type: 'expression',
+        latex: `y = \\frac{${minerals[1].ratioMax}}{${minerals[0].ratioMin}} x \\{x > 0\\}`,
+        color: Desmos.Colors.ORANGE,
+        lineStyle: Desmos.Styles
+        });
+      }
+      
+      calculator.setExpression({
+        id: 'ratio_lower_limit', 
+        type: 'expression',
+        latex: `y = \\frac{${minerals[1].ratioMin}}{${minerals[0].ratioMax}} x \\{x > 0\\}`,
+        color: Desmos.Colors.PURPLE,
+        lineStyle: Desmos.Styles
+      });
+      console.log(`y = \\frac{${minerals[1].ratioMin}}{${minerals[0].ratioMax}} x \\{x > 0\\}`)
+      console.log(`y = \\frac{${minerals[1].ratioMax}}{${minerals[0].ratioMin}} x \\{x > 0\\}`)
+      
+      calculator.setExpression({
+        id: 'ratio_upper_limit', 
+        type: 'expression',
+        latex: `y = \\frac{${minerals[1].ratioMax}}{${minerals[0].ratioMin}} x \\{x > 0\\}`,
+        color: Desmos.Colors.ORANGE,
+        lineStyle: Desmos.Styles
+      });
+
+
+      calculator.setExpression({
+        id: 'x_values',
+        type: 'expression',
+        latex: `X_{vals} = [${xData.join(',')}]`
+      });
+
+      calculator.setExpression({
+        id: 'y_values',
+        type: 'expression',
+        latex: `Y_{vals} = [${yData.join(',')}]`
+      });
+
+      
+      calculator.setExpression({
+        id: 'points_plot',
+        type: 'expression',
+        latex: `(X_{vals}, Y_{vals})`,
+        color: Desmos.Colors.BLUE,
+        pointStyle: Desmos.Styles.POINT,
+        pointSize: '3' 
+      });
+
+      let xAxisLabel = minerals[0].name + " (mb)";
+      let yAxisLabel = minerals[1].name + " (mb)";
+
+      calculator.updateSettings({
+        xAxisLabel: xAxisLabel,
+        yAxisLabel: yAxisLabel,
+        xAxisStep: 1, // Opcional: fuerza pasos enteros si quieres
+        yAxisStep: 1
+      });
+
+
+    }
+    else return;
+  }
+  
+  
+  
+
+  const minX = Math.min(...xData) * -1;
+  const maxX = Math.max(...xData) * 1.2;
+  const minY = Math.min(...yData) * -1;
+  const maxY = Math.max(...yData) * 1.2;
+
+  calculator.setMathBounds({
+    left: minX,
+    right: maxX,
+    bottom: minY,
+    top: maxY
+  });
+  
+  
+}
+
 
 async function alloysCalculate() {
   const btn = document.getElementById('alloy-calc-btn');
@@ -350,6 +536,9 @@ async function alloysCalculate() {
   const endTime = performance.now();
   const timeElapsed = (endTime - startTime).toFixed(2);
   console.log(`${timeElapsed} ms`)
+
+  // Main machine does 15.3 seconds, old laptop up  to 1.2 minutes
+
   await updateStatus("Rendering...");
   renderAlloyResults(values);
   
@@ -386,11 +575,23 @@ function buildHighlightDetail(item) {
 }
 
 function renderAlloyResults(results) {
-  if (!results.length) return;
-  document.getElementById('alloy-results-wrap').classList.remove('hidden');
   
   const wrap = document.getElementById('alloy-results-wrap');
   wrap.classList.remove('hidden');
+
+  if (!results || results.length === 0) {
+    wrap.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: #666; background: #f8f9fa; border-radius: 8px; border: 1px dashed #ccc;">
+        <h3 style="margin-top:0; color:#E76F51;">No valid combinations found</h3>
+      </div>
+    `;
+    wrap.classList.remove('hidden');
+    return;
+  }
+
+  
+  
+  
 
   // Sort by MB descending for max/min
   const sorted = [...results].sort((a, b) => b.MB - a.MB);
@@ -485,18 +686,27 @@ function renderAlloyResults(results) {
   // Scroll to results
   wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+  const desmos = document.getElementById('calculator');
+  desmos.classList.add("hidden");
+  const ternary = document.getElementById('ternary');
+  ternary.classList.add("hidden");
 
   // RENDER GRAPH
   if (minerals.length<=2){
-
+    
+    updateDesmosGraph(results);
   }
-
-
-
-
+  else{
+    updateTernatyGraph()
+  }
 }
 
-
+function updateTernatyGraph(){
+  const elt = document.getElementById('ternary');
+  if (!elt) return;
+  elt.classList.remove("hidden");
+  elt.innerHTML="Not implemented yet"
+}
 
 
 function toggleAlloyTable() {
