@@ -416,6 +416,8 @@ function handleStepDrop(e,slot) {
   e.preventDefault();
   if (!currentDragInfo || currentDragInfo.type !== 'step') return;
   
+  const mobileQuery = window.matchMedia('(max-width: 768px)');
+
   const step_inner = e.currentTarget;
   step_inner.innerHTML = ''; 
   const cloned = currentDragInfo.element.cloneNode(true);
@@ -425,7 +427,10 @@ function handleStepDrop(e,slot) {
   cloned.style.cursor = 'default';
   cloned.style.pointerEvents = 'none'; 
   slot.style.border = "none"
-  cloned.style.aspectRatio = '1'
+
+  if (mobileQuery.matches) cloned.style.aspectRatio = '';
+  else cloned.style.aspectRatio = '1'
+  
   step_inner.appendChild(cloned);
 
   recipeState[slot.dataset.slot].step=e.target.children[0].dataset.stepId
