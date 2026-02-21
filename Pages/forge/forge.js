@@ -364,9 +364,9 @@ function renderResultsTable(steps) {
   
   // Show results section
   resultsWrap.classList.remove('hidden');
-
+  toggleStepTable()
   resultsWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
+  
 }
 
 
