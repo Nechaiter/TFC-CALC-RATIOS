@@ -132,7 +132,7 @@ function alloysAddMineral() {
 
 function alloysRemoveMineral(mIdx) {
   minerals.splice(mIdx, 1);
-  console.log("tets")
+  
   if (minerals.length===1){
     minerals[0].ratioMin = 0
     minerals[0].ratioMax = 100
@@ -196,7 +196,7 @@ function updateDesmosGraph(results) {
         // El límite es una línea horizontal (techo)
         latex: `y = ${3024} \\{x > 0\\}`,
         color: Desmos.Colors.RED,
-        lineStyle: Desmos.Styles
+        lineStyle: Desmos.Styles.SOLID
     });
 
     calculator.setExpression({
@@ -245,13 +245,13 @@ function updateDesmosGraph(results) {
         color: Desmos.Colors.RED
       })
       if (minerals[0].ratioMin===0){
-        console.log("test")
+        
         calculator.setExpression({
         id: 'vertical_orange',
         type: 'expression',
         latex: `x = 0\\{y>0\\}`,
         color: Desmos.Colors.ORANGE,
-        lineStyle: Desmos.Styles,
+        lineStyle: Desmos.Styles.SOLID,
         lineOpacity: 1,  
         lineWidth: 5   
         });
@@ -502,7 +502,7 @@ async function alloysCalculate() {
     let name=minerals[mineral_index].name
     bound.push(minerals_data[name].length)
   }
-  console.log()
+  
   // Optional: Inform about the magnitude of the reduction
   await updateStatus(`Filtering ${bound.reduce((a,b)=>a*b, 1)} candidates...`);
 
@@ -548,8 +548,8 @@ async function alloysCalculate() {
     // testy.push(weighted_sum[1])
     combinaciones+=1
   });
-  console.log(combinaciones)
-  console.log(values)
+  // console.log(combinaciones)
+  // console.log(values)
   // STEP 4: SORTING
   await updateStatus("Sorting results...");
 
@@ -573,13 +573,14 @@ async function alloysCalculate() {
   // Main machine does 15.3 seconds, old laptop up  to 1.2 minutes
 
   await updateStatus("Rendering...");
+  console.log(values)
   renderAlloyResults(values);
   
   if(btn) {
     btn.disabled = false;
     btn.innerHTML = originalContent;
   }
-  // console.table(values)
+  
 }
 /* Build a highlight card's HTML detail block */
 function buildHighlightDetail(item) {
@@ -638,7 +639,7 @@ function renderAlloyResults(results) {
     highlightsEl.innerHTML += `
       <div class="result-highlight is-max">
         <span class="result-badge max">Max #${i + 1}</span>
-        <span class="result-value max-val">${item.MB} mB</span>
+        <span class="result-value max-val">${item.ingots} ingots</span>
         <div class="result-detail">${buildHighlightDetail(item)}</div>
       </div>
     `;
@@ -647,7 +648,7 @@ function renderAlloyResults(results) {
     highlightsEl.innerHTML += `
     <div class="result-highlight is-min">
       <span class="result-badge min">Min</span>
-      <span class="result-value min-val">${minItem.MB} mB</span>
+      <span class="result-value min-val">${minItem.ingots} ingots</span>
       <div class="result-detail">${buildHighlightDetail(minItem)}</div>
     </div>
   `;
@@ -662,7 +663,7 @@ function renderAlloyResults(results) {
   const table = document.getElementById('alloy-data-table');
 
   let headerHtml = '<thead><tr>';
-  headerHtml += '<th>#</th><th>MB</th><th>Items</th><th>Slots</th>';
+  headerHtml += '<th>#</th><th>Ingots</th><th>MB</th><th>Items</th><th>Slots</th>';
 
   // Weighted sum columns
   minerals.forEach((m, mIdx) => {
@@ -691,7 +692,8 @@ function renderAlloyResults(results) {
 
     bodyHtml += `<tr class="${rowClass}">`;
     bodyHtml += `<td class="cell-muted">${i + 1}</td>`;
-    bodyHtml += `<td class="${mbClass}" style="font-weight:600;">${r.MB}</td>`;
+    bodyHtml += `<td class="${mbClass}" style="font-weight:600;">${r.ingots}</td>`;
+    bodyHtml += `<td>${r.MB}</td>`;
     bodyHtml += `<td>${r.total_items}</td>`;
     bodyHtml += `<td>${r.slots}</td>`;
 

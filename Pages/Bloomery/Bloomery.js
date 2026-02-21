@@ -269,11 +269,11 @@ function renderBloomeryResults(results) {
 
   
 
-  
+  console.log(best)
   document.getElementById('best-ingots').textContent = best.ingots;
   document.getElementById('best-ore').textContent = best.iron_ore_count;
   document.getElementById('best-mb').textContent = best.MB;
-  
+  document.getElementById('best-coal').textContent = best.coal;
   document.getElementById('best-detail').innerHTML = buildBloomeryDetail(best);
 
   const top3Grid = document.getElementById('top3-grid');
@@ -287,7 +287,8 @@ function renderBloomeryResults(results) {
       <span class="top3-badge">#${i + 1}</span>
       <span class="top3-value">${item.ingots} ingots</span>
       <div class="top3-detail">
-        ${item.MB} mb
+        ${item.MB} mb,
+        ${item.coal} coal n.
         <div class="top3-meta">
           ${buildBloomeryDetail(item)}
         </div>
@@ -301,7 +302,7 @@ function renderBloomeryResults(results) {
 
   const table = document.getElementById('bloomery-data-table');
   let headerHtml = '<thead><tr>';
-  headerHtml += '<th>#</th><th>Ingots</th><th>MB</th><th>Ore count</th>';
+  headerHtml += '<th>#</th><th>Ingots</th><th>MB</th><th>Ore count</th><th>Coal n.</th>';
 
   ironCoefficients.forEach((c, ci) => {
     headerHtml += `<th style="color:${IRON_COLOR};">x<sub>${ci + 1}</sub> <span style="opacity:0.5;">(${c})</span></th>`;
@@ -320,6 +321,8 @@ function renderBloomeryResults(results) {
     bodyHtml += `<td class="${ingotsClass}" style="font-weight:600;">${r.ingots}</td>`;
     bodyHtml += `<td>${r.MB}</td>`;
     bodyHtml += `<td>${r.iron_ore_count}</td>`;
+    bodyHtml += `<td>${r.coal}</td>`;
+
 
     r.var_counts.forEach(v => {
       bodyHtml += `<td>${v}</td>`;

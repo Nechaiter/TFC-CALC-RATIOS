@@ -41,7 +41,8 @@
     </button>
     <div class="nav-divider"></div>
     <button id="nav-bloomery" class="nav-link">Bloomery</button>
-    <button id="nav-alloys" class="nav-link" onclick="showView('Alloys')">Alloys</button>
+    <button id="nav-alloys" class="nav-link" onclick="showView('vessel_alloys')">Alloys</button>
+    <button id="nav-forge" class="nav-link" onclick="showView('forge')">Forge </button>
   </nav>
 
 
@@ -108,6 +109,10 @@
                   <div class="best-stat">
                     <span class="best-stat-label">Total MB</span>
                     <span class="best-stat-value" id="best-mb">0</span>
+                  </div>
+                  <div class="best-stat">
+                    <span class="best-stat-label">Coal needed</span>
+                    <span class="best-stat-value" id="best-coal">0</span>
                   </div>
                 </div>
                 <div class="best-detail" id="best-detail"></div>
