@@ -1,7 +1,8 @@
 # TerraFirmaCraft: Early Game Efficiency Ratios
 
-This guide explains how to calculate and apply optimal ratios for early-game mechanics in TerraFirmaCraft (TFC), focusing on Alloy Vessels and Bloomery efficiency.
+This file explains how to calculate optimal points ratios for early-game mechanics in TerraFirmaCraft (TFC), focusing on Alloy Vessels and Bloomery efficiency.
 
+In the web page you can use more variable to do the same calcs
 ## 1. Alloy Ratios in Vessels
 
 [Interactive Graph: Desmos Calculator](https://www.desmos.com/calculator/x55yoxhrbt)
@@ -13,7 +14,7 @@ To create Brass, we mix Copper ($x$) and Zinc ($y$). The sum of these metals (in
 
 $$x + y \le 3024 \quad \{x > 0, y > 0\}$$
 
-![Brass Capacity Constraints](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/vessel_capacity.png?raw=true)
+![Brass Capacity Constraints](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/vessel_capacity.png?raw=true)
 
 ### Alloy Bounds
 Every alloy has a lower and upper bound for its components. For Brass, the required ratio is **20–30% Zinc** and **70–80% Copper**. This creates a validity zone defined by two linear equations:
@@ -24,7 +25,7 @@ $$y = \frac{30}{70}x \quad \{x > 0\}$$
 **Lower Bound (20% Zinc):**
 $$y = \frac{20}{80}x \quad \{x > 0\}$$
 
-![Brass Alloy Bounds](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/alloy_bounds.png?raw=true)
+![Brass Alloy Bounds](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/alloy_bounds.png?raw=true)
 
 ### Optimizing Ore Combinations
 Ores come in three sizes, each providing a specific amount of metal. Let $a, b, c$ (for Zinc) and $d, g, f$ (for Copper) represent the count of each ore size:
@@ -50,7 +51,7 @@ The graph below plots valid combinations. The diagonal lines represent multiples
 
 
 
-![Graph of Valid Points](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/Best_ratio.png?raw=true)
+![Graph of Valid Points](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/Best_ratio.png?raw=true)
 
 * **Zinc-Rich:** Select points closer to the purple line.
 * **Copper-Rich:** Select points closer to the green line.
@@ -60,13 +61,9 @@ To refine the selection, we categorize points by the diversity of ore sizes used
 * **Black:** Uses 3 ore types.
 * **Red:** Uses 4 ore types.
 
-![Granulated Selection](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/multiple_points.png?raw=true)
+![Granulated Selection](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/multiple_points.png?raw=true)
 
-**Recommendation:** Prioritize points that maximize ingot output while using the fewest ore types (Orange or Blue). For example, the two blue dots on the red line allow for high efficiency:
-* Coordinates: $(2160, 864)$ and $(2304, 720)$
-* These points vary only in the amount of Zinc dust required.
-
-![Specific Point Selection](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/alloy_table.png?raw=true)
+**Recommendation:** Prioritize points that maximize ingot output while using the fewest amount of ore. For example, the two blue dots on the red line allow for high efficiency
 
 ---
 
@@ -81,7 +78,7 @@ Let $x$ be the quantity of Iron Ore items and $y$ be the quantity of Charcoal it
 
 $$x + y \le 48 \quad \{x > 0, y > 0\}$$
 
-![Bloomery Constraints](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/bloom_capacity.png?raw=true)
+![Bloomery Constraints](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/bloom_capacity.png?raw=true)
 
 ### Avoiding Material Loss
 To prevent the loss of molten iron, the input iron (in mB) must be sufficient to produce full ingots (144 mB each) proportional to the charcoal used (1 charcoal creates 1 bloom/ingot).
@@ -95,7 +92,7 @@ Where:
 * $y$ is the amount of charcoal needed.
 * The goal is to find a point where the iron provided is equal to or slightly greater than the smelting capacity of the charcoal.
 
-![Efficiency Zone](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/iron_bound.png?raw=true)
+![Efficiency Zone](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/iron_bound.png?raw=true)
 
 ### Optimal Configuration
 We search for points within the blue zone that satisfy all constraints. The Y-axis represents both the charcoal count and the resulting ingot count.
@@ -103,7 +100,7 @@ We search for points within the blue zone that satisfy all constraints. The Y-ax
 **Strategy:**
 Fortunately, all points represent a weighted sum multiple of 144 , so using any of them will prevent iron loss. To maximize efficiency (maximum ingots, zero loss), simply select the point with the **highest Y value**.
 
-![Optimal Points Graph](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/iron_points.png?raw=true)
+![Optimal Points Graph](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/iron_points.png?raw=true)
 
 * **Right Side:** These points fill the bloomery's 48-item capacity completely.
 * **Left Side:** These points use fewer items overall.
@@ -116,4 +113,4 @@ The optimal configuration found involves:
 * **1** Medium Ore (31 mB)
 * **2** Small Ores (13 mB)
 
-![Final Ratio Calculation](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/images/bloomery_table.png?raw=true)
+![Final Ratio Calculation](https://github.com/Nechaiter/Semi-Guide-TFC-Early-Game-Ratios/blob/main/Images/bloomery_table.png?raw=true)
