@@ -425,6 +425,7 @@ function handleStepDrop(e,slot) {
   cloned.style.cursor = 'default';
   cloned.style.pointerEvents = 'none'; 
   slot.style.border = "none"
+  cloned.style.aspectRatio = '1'
   step_inner.appendChild(cloned);
 
   recipeState[slot.dataset.slot].step=e.target.children[0].dataset.stepId
