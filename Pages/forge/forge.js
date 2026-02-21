@@ -142,6 +142,9 @@ function renderForgeDraggableOptions() {
       e.dataTransfer.effectAllowed = 'copy';
     });
 
+    draggable.addEventListener('click', () => {
+      selectItem(draggable, 'step');
+    });
     grid.appendChild(draggable);
   }
 }
@@ -151,22 +154,27 @@ function renderPriorities() {
   grid.innerHTML = '';
 
   Object.keys(PRIORITY_LEVELS).forEach(key =>{
-    const draggrable = document.createElement('div');
-    draggrable.className = 'priority-dragg';
-    draggrable.draggable = true;
-    draggrable.dataset.priority = key;
+    const draggable = document.createElement('div');
+    draggable.className = 'priority-dragg';
+    draggable.draggable = true;
+    draggable.dataset.priority = key;
 
-    draggrable.innerHTML = `
+    draggable.innerHTML = `
       <img class="priority-icon" src="${PRIORITY_LEVELS[key].icon}">
       <span class="priority-number">${key}</span>
     `;
 
-    draggrable.addEventListener('dragstart', (e) => {
+    draggable.addEventListener('dragstart', (e) => {
       draggedPriority = key;
       e.dataTransfer.effectAllowed = 'copy';
     });
 
-    grid.appendChild(draggrable);
+    draggable.addEventListener('click', () => {
+      selectItem(draggable, 'priority');
+    });
+
+
+    grid.appendChild(draggable);
   })
 
 }
@@ -414,6 +422,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function handleStepDrop(e,slot) {
   e.preventDefault();
+
+
   if (!currentDragInfo || currentDragInfo.type !== 'step') return;
   
   const mobileQuery = window.matchMedia('(max-width: 768px)');
@@ -427,7 +437,7 @@ function handleStepDrop(e,slot) {
   cloned.style.cursor = 'default';
   cloned.style.pointerEvents = 'none'; 
   slot.style.border = "none"
-
+  cloned.classList.remove('selected');
   if (mobileQuery.matches) cloned.style.aspectRatio = '';
   else cloned.style.aspectRatio = '1'
   
@@ -455,8 +465,9 @@ function handleStepDrop(e,slot) {
 
 function handlePriorityDrop(e,slot) {
   e.preventDefault();
-  if (!currentDragInfo || currentDragInfo.type !== 'priority') return;
-
+  
+  
+  if (!currentDragInfo ||currentDragInfo.type !== 'priority') return;
   const priority_inner = e.currentTarget;
   priority_inner.innerHTML = '';
   const cloned = currentDragInfo.element.cloneNode(true);
@@ -466,13 +477,46 @@ function handlePriorityDrop(e,slot) {
   cloned.style.cursor = 'default';
   cloned.style.pointerEvents = 'none'; 
   cloned.style.border='none'
-
+  cloned.classList.remove('selected');
   slot.style.border = "none"
   priority_inner.appendChild(cloned);
 
   recipeState[slot.dataset.slot].priority=e.target.children[0].dataset.priority
   
+}
+// currentDragInfo = {
+//             element: selectedItem.element,
+//             type: selectedItem.type,
+//             id: selectedItem.element.dataset.stepId
+//         };
+
+let currentDragInfo = {
+            element: null,
+            type: null,
+            id: null
+        };
+function selectItem(element, type) {
   
+  clearSelection();
+  
+  currentDragInfo = {
+            element: element,
+            type: type,
+            id: element.dataset
+        };
+  element.classList.add('selected');
+}
+
+function clearSelection() {
+  console.log(currentDragInfo)
+  if (currentDragInfo.id!== null) {
+    currentDragInfo.element.classList.remove('selected');
+    currentDragInfo = {
+            element: null,
+            type: null,
+            id: null
+        };;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -490,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentDragInfo = {
             element: draggable,
             type: 'step',
-            id: draggable.dataset.stepId
+            id: draggable.dataset
         };
       e.target.style.opacity = '1';
     });
@@ -510,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentDragInfo = {
             element: draggable,
             type: 'priority',
-            id: draggable.dataset.stepId
+            id: draggable.dataset
         };
       
       e.target.style.opacity = '1';
@@ -521,15 +565,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') clearSelection();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.forge-option-dragg, .priority-dragg, .recipe-slot')) {
+      clearSelection();
+    }
+  });
   
 
   document.querySelectorAll('.slot-step').forEach(slot => {
+      slot.addEventListener('click', e =>{
+        handleStepDrop(e, slot);
+      }); 
+
       slot.addEventListener('dragover', e => e.preventDefault()); 
       slot.addEventListener('drop', (e)=>{handleStepDrop(e,slot)});
   });
 
   document.querySelectorAll('.slot-priority').forEach(slot => {
+      slot.addEventListener('click', e =>{
+        handlePriorityDrop(e, slot);
+      }); 
+
       slot.addEventListener('dragover', e => e.preventDefault()); 
       slot.addEventListener('drop', (e)=>{handlePriorityDrop(e,slot)});
   });

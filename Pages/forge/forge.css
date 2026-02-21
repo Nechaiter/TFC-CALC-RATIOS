@@ -420,7 +420,13 @@
   image-rendering: crisp-edges;               
   image-rendering: pixelated;
 }
-
+.forge-option-dragg.selected,
+.priority-dragg.selected {
+  outline: 2px solid var(--accent, #4dabf7);
+  outline-offset: 2px;
+  box-shadow: 0 0 12px rgba(77, 171, 247, 0.4);
+  transform: scale(1.05);
+}
 .forge-option-dragg[data-color="cyan"] { border-color: #90E0EF; background: rgba(144, 224, 239, 0.1); color: #90E0EF; }
 .forge-option-dragg[data-color="light_blue"] { border-color: #48CAE4; background: rgba(72, 202, 228, 0.1); color: #48CAE4; }
 .forge-option-dragg[data-color="blue"] { border-color: #0077B6; background: rgba(0, 119, 182, 0.1); color: #0077B6; }
